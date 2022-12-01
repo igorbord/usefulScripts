@@ -7,11 +7,13 @@ namespace Classes\Request;
  */
 class HttpClient
 {
-    /** @var string */
-    private $last_error = '';
+    /** 
+     * Код ошибки
+     * @var int */
+    private $errorCode = null;
 
     /** @var int */
-    private $connect_timeout = 30;
+    private $connectTimeout = 30;
 
     /** @var int */
     private $timeout = 10;
@@ -20,48 +22,53 @@ class HttpClient
      * Контент последнего ответа
      * @var string
      */
-    private $last_content = '';
+    private $response = '';
 
-    /** @var bool */
-    private $debug = false;
+    /** 
+     * Данные запроса
+     * @var array */
+    private $requestInfo = [];
+
+    /** 
+     * Данные ответа на запрос
+     * @var array */
+    private $responseInfo = [];
 
     public function __construct()
     {
     }
 
-    public function request(string $method, string $url, array $body = [], array $options = []): array
+    public function request(string $method, string $url, array $body = [], array $options = []): object
     {
-        $response = false;
         if ($method == 'GET') {
-            $response = $this->get($url, $body, $options);
+            $this->get($url, $body, $options);
         }
         if ($method == 'POST') {
-            $response = $this->post($url, $body, $options);
+            $this->post($url, $body, $options);
         }
 
-        $response = json_decode($response, true);
-        if ($response === null) {
-            return false;
+        if (!empty($this->getErrorCode())) {
+            throw new \Exception('Error on Request');
         }
 
-        return $response;
+        return $this;
     }
 
-    private function get(string $url, array  $body = [], array $options = [])
+    private function get(string $url, array  $body = [], array $options = []): void
     {
         $url = $this->builderUrl($url, $body);
         $options[CURLOPT_HTTPGET] = true;
-        return $this->doRequest($url, $options);
+        $this->doRequest($url, $options);
     }
 
-    private function post(string $url, array $body = [], array $options = [])
+    private function post(string $url, array $body = [], array $options = []): void
     {
         $options[CURLOPT_POST] = true;
         $options[CURLOPT_POSTFIELDS] = $body;
-        return $this->doRequest($url, $options);
+        $this->doRequest($url, $options);
     }
 
-    private function doRequest(string $url, array $options)
+    private function doRequest(string $url, array $options): void
     {
         $ch = curl_init();
         $options = $options + [
@@ -69,46 +76,16 @@ class HttpClient
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_SSL_VERIFYHOST => false,
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_CONNECTTIMEOUT => $this->connect_timeout,
+            CURLOPT_CONNECTTIMEOUT => $this->connectTimeout,
             CURLOPT_TIMEOUT => $this->timeout,
         ];
         curl_setopt_array($ch, $options);
 
-        if ($this->debug) curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $this->setResponse(curl_exec($ch));
+        $this->setErrorCode(curl_errno($ch));
 
-        $response = curl_exec($ch);
-        $errno = curl_errno($ch);
-
-        if ($errno) $this->last_error = 'Error curl code: ' . $errno;
-
-        if ($this->debug) {
-            $arrDebug = [
-                'curl_setopt' => [
-                    'CURLOPT_URL' => $options[CURLOPT_URL],
-                    'CURLOPT_HTTPGET' => $options[CURLOPT_HTTPGET],
-                    'CURLOPT_POST' => $options[CURLOPT_POST],
-                    'CURLOPT_POSTFIELDS' => $options[CURLOPT_POSTFIELDS],
-                    'CURLOPT_RETURNTRANSFER' => $options[CURLOPT_RETURNTRANSFER],
-                    'CURLOPT_SSL_VERIFYHOST' => $options[CURLOPT_SSL_VERIFYHOST],
-                    'CURLOPT_SSL_VERIFYPEER' => $options[CURLOPT_SSL_VERIFYPEER],
-                    'CURLOPT_CONNECTTIMEOUT' => $options[CURLOPT_CONNECTTIMEOUT],
-                    'CURLOPT_TIMEOUT' => $options[CURLOPT_TIMEOUT],
-                ],
-                'getInfo' => curl_getinfo($ch),
-            ];
-            if ($errno) $arrDebug['errorCode'] = $this->last_error;
-
-            if (function_exists('debug')) {
-                debug($arrDebug, get_class($this) . ' debug:');
-            } else {
-                echo '<pre>' . get_class($this) . ' debug: ' . print_r($arrDebug, 1) . '</pre>';
-            }
-        }
-
-        if ($errno) return false;
-
-        $this->last_content = $response;
-        return $this->last_content;
+        $this->setRequestInfo($options);
+        $this->setResponseInfo(curl_getinfo($ch));
     }
 
     private function builderUrl(string $url, array $body): string
@@ -141,24 +118,47 @@ class HttpClient
         return $query;
     }
 
-    public function getLastError(): string
+    private function setErrorCode(int $code)
     {
-        return $this->last_error;
+        $this->errorCode = $code ? $code : NULL;
+        return $this;
     }
 
-    public function getLastContent(): string
+    public function getErrorCode()
     {
-        return $this->last_content;
+        return $this->errorCode;
+    }
+
+    private function setResponse(string $response): object
+    {
+        $this->response = $response;
+        return $this;
+    }
+
+    public function getResponse()
+    {
+        $response = json_decode($this->response, true);
+        if (json_last_error() === JSON_ERROR_NONE)
+            return $response;
+
+        return $this->response;
+    }
+
+    public function setConnectTimeout(int $connectTimeout): object
+    {
+        $this->connectTimeout = $connectTimeout;
+        return $this;
     }
 
     public function getConnectTimeout(): int
     {
-        return $this->connect_timeout;
+        return $this->connectTimeout;
     }
 
-    public function setConnectTimeout(int $connect_timeout): void
+    public function setTimeout(int $timeout): object
     {
-        $this->connect_timeout = $connect_timeout;
+        $this->timeout = $timeout;
+        return $this;
     }
 
     public function getTimeout(): int
@@ -166,18 +166,35 @@ class HttpClient
         return $this->timeout;
     }
 
-    public function setTimeout(int $timeout): void
+    private function setRequestInfo(array $data)
     {
-        $this->timeout = $timeout;
+        $this->requestInfo = [
+            'CURLOPT_URL' => $data[CURLOPT_URL],
+            'CURLOPT_HTTPGET' => $data[CURLOPT_HTTPGET],
+            'CURLOPT_POST' => $data[CURLOPT_POST],
+            'CURLOPT_POSTFIELDS' => $data[CURLOPT_POSTFIELDS],
+            'CURLOPT_RETURNTRANSFER' => $data[CURLOPT_RETURNTRANSFER],
+            'CURLOPT_SSL_VERIFYHOST' => $data[CURLOPT_SSL_VERIFYHOST],
+            'CURLOPT_SSL_VERIFYPEER' => $data[CURLOPT_SSL_VERIFYPEER],
+            'CURLOPT_CONNECTTIMEOUT' => $data[CURLOPT_CONNECTTIMEOUT],
+            'CURLOPT_TIMEOUT' => $data[CURLOPT_TIMEOUT],
+        ];
+        return $this;
     }
 
-    public function isDebug(): bool
+    public function getRequestInfo(): array
     {
-        return $this->debug;
+        return $this->requestInfo;
     }
 
-    public function setDebug(bool $debug): void
+    private function setResponseInfo(array $data)
     {
-        $this->debug = $debug;
+        $this->responseInfo = $data;
+        return $this;
+    }
+
+    public function getResponseInfo(): array
+    {
+        return $this->responseInfo;
     }
 }
