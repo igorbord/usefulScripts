@@ -1,10 +1,11 @@
 <?
-spl_autoload_register();
-
-require_once __DIR__ . '/functions/functions.php';
 require_once __DIR__ . '/functions/debug.php';
-?>
+require_once __DIR__ . '/functions/functions.php';
 
+spl_autoload_register('autoloadClasses');
+(new ErrorProcessing)->register(); // Собственный отлавливать ошибок
+
+?>
 <!DOCTYPE html>
 <html lang="ru">
 

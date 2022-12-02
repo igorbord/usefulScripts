@@ -1,4 +1,2 @@
 <?
 
-use \Classes\Request\HttpClient;
-

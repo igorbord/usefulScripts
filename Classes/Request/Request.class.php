@@ -1,6 +1,6 @@
 <?
 
-namespace Classes\Request;
+namespace Request;
 
 /**
  * Класс для безопасной работы с массивом $_REQUEST
@@ -50,7 +50,7 @@ class Request
     }
 
     // возвращаем содержимое хранилища
-    public function getRequestEntries()
+    public function getRequest()
     {
         return self::$storage;
     }

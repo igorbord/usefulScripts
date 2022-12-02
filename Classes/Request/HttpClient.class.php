@@ -1,6 +1,5 @@
 <?
-
-namespace Classes\Request;
+namespace Request;
 
 /**
  * Класс для работы с запросами через curl
@@ -36,6 +35,7 @@ class HttpClient
 
     public function __construct()
     {
+        return $this;
     }
 
     public function request(string $method, string $url, array $body = [], array $options = []): object
