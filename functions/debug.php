@@ -45,6 +45,33 @@ function debug($data, $name = NULL)
             debug($value);
             $rezult .= '</div>';
         }
+
+        if (is_object($data)) {
+            $methods = get_class_methods($data);
+            if (!empty($methods)) {
+                $rezult .= '
+                    <div class="methods">
+                        <span class="key arr_obj_key" style="' .  $style['arr_obj_key'] . '">' . str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $nestingLevel) . '[methods]
+                            <span class="arrow" style="' . $style['arrow'] . '">&#10148;</span>
+                        </span>
+                        <span class="type" style="' . $style['type'] . '"> (public methods) </span>
+                        <div class="value">' . str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $nestingLevel) . '(';
+                $nestingLevel++;
+                foreach ($methods as $i => $method) {
+                    $rezult .= '
+                            <div class="var">
+                                <span class="key">' . str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $nestingLevel) . '[' . $i . ']
+                                    <span class="arrow" style="' . $style['arrow'] . '">&#10148;</span>
+                                </span>
+                                <span class="value" style="' . $style['str'] . '">' . $method . '()</span> <span class="type" style="' . $style['type'] . '">(method)</span>
+                            </div>';
+                }
+                $nestingLevel--;
+                $rezult .=  str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $nestingLevel) . ')</div>';
+                $rezult .= '</div>';
+            }
+        }
+
         $nestingLevel--;
         $rezult .= str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;', $nestingLevel) . ')</div>';
     } else {
