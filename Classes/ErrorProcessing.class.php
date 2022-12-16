@@ -74,38 +74,4 @@ class ErrorProcessing
             echo '<pre>' . print_r($errorData, 1) . '</pre>';
         }
     }
-
-    public function mapErrorCode(int $code): string
-    {
-        $error = null;
-        switch ($code) {
-            case E_PARSE:
-            case E_ERROR:
-            case E_CORE_ERROR:
-            case E_COMPILE_ERROR:
-            case E_USER_ERROR:
-                $error = 'Fatal Error';
-                break;
-            case E_WARNING:
-            case E_USER_WARNING:
-            case E_COMPILE_WARNING:
-            case E_RECOVERABLE_ERROR:
-                $error = 'Warning';
-                break;
-            case E_NOTICE:
-            case E_USER_NOTICE:
-                $error = 'Notice';
-                break;
-            case E_STRICT:
-                $error = 'Strict';
-                break;
-            case E_DEPRECATED:
-            case E_USER_DEPRECATED:
-                $error = 'Deprecated';
-                break;
-            default:
-                break;
-        }
-        return $error;
-    }
 }
