@@ -8,7 +8,7 @@
 function debug($data, $name = NULL)
 {
     $style = [
-        'debug' => 'font-size:14px;padding:20px;margin:0;display:block;font-family:Consolas,monospace;color:#368bd2;line-height:1.4em;background-color:#303030;border:' . ($name == "ERROR" ? '5px solid #ff3939' : '3px solid #368bd2') . ';border-radius:20px;',
+        'debug' => 'font-size:14px;padding:20px;margin:5px;display:block;font-family:Consolas,monospace;color:#368bd2;line-height:1.4em;background-color:#303030;border:' . ($name == "ERROR" ? '5px solid #ff3939' : '3px solid #368bd2') . ';border-radius:20px;',
         'int' => 'color:#8bd465;',
         'str' => 'color:#c28972;',
         'bool' => 'color:#ff5b5b;',
@@ -77,8 +77,9 @@ function debug($data, $name = NULL)
     } else {
         if (isset($data)) {
             switch (gettype($data)) {
+                case 'double':
                 case 'integer':
-                    $rezult .= '<span class="value" style="' . $style['int'] . '">' . $data . '</span> <span class="type" style="' . $style['type'] . '">(int ' . strlen((string)$data) . ')</span>';
+                    $rezult .= '<span class="value" style="' . $style['int'] . '">' . $data . '</span> <span class="type" style="' . $style['type'] . '">(' . gettype($data) . ' ' . strlen((string)$data) . ')</span>';
                     break;
                 case 'string':
                     $rezult .= '<span class="value" style="' . $style['str'] . '">' . $data . '</span> <span class="type" style="' . $style['type'] . '">(str ' . strlen($data) . ')</span>';
@@ -87,7 +88,7 @@ function debug($data, $name = NULL)
                     $rezult .= '<span class="value" style="' . $style['bool'] . '">' . ($data == true ? 'true' : 'false') . '</span> <span class="type" style="' . $style['type'] . '">(bool)</span>';
                     break;
                 default:
-                    $rezult .= 'todo';
+                    $rezult .= 'todo <span class="type" style="' . $style['type'] . '">(' . gettype($data) . ')</span>';
             }
         } else {
             $rezult .= '<span class="type" style="' . $style['type'] . '">(NULL)</span>';
