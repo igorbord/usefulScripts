@@ -35,6 +35,11 @@ class Request
     {
         if (isset(self::$storage[$name])) return self::$storage[$name];
     }
+    
+    // Запрещаю изменять данные
+    private function __set($key, $val)
+    {
+    }
 
     // очистка данных от опасных символов
     private static function cleanInput($data)
