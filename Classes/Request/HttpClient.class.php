@@ -2,6 +2,26 @@
 namespace Request;
 
 /**
+ * Пример использования
+    $curl = new HttpClient();
+    try {
+        $curl->request('GET', 'https://reqres.in1/api/users', ['page' => 2]);
+        debug($curl->getResponse());
+    } catch (Exception $e) {
+        $exceptionData = [
+            'errorCode' => $curl->getErrorCode(),
+            'description' => $e->getMessage(),
+            'requestInfo' => $curl->getRequestInfo(),
+            'responseInfo' => $curl->getResponseInfo(),
+        ];
+        if (function_exists('debug'))
+            debug($exceptionData, 'ERROR');
+        else
+            echo '<pre>' . print_r($exceptionData, 1) . '</pre>';
+    }
+ */
+
+/**
  * Класс для работы с запросами через curl
  */
 class HttpClient
