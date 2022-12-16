@@ -1,29 +1,29 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
+body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     min-height: 100vh;
     background: #091921;
-    height: 400px;
+    height: 600px;
+    width: 330px;
 }
 
-.clock{
-    top:0;
-    width: 350px;
-    height: 350px;
+.clock {
+    top: 0;
+    width: 300px;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
     background: url(clock.png),
-    url(js.png),
-    radial-gradient(circle, rgb(37, 73, 90) 0%, rgb(25, 48, 60) 11%, rgba(9,25,33,1) 38%);
+        radial-gradient(circle, rgb(37, 73, 90) 0%, rgb(25, 48, 60) 11%, rgba(9, 25, 33, 1) 38%);
     background-size: cover;
     /* border-radius: 50%;
     box-shadow: 0 -15px 15px rgba(134, 134, 134, 0.35),
@@ -33,7 +33,7 @@ body{
     ; */
 }
 
-.clock:before{
+.clock:before {
     content: '';
     position: absolute;
     width: 15px;
@@ -45,31 +45,33 @@ body{
 
 .clock .hour,
 .clock .min,
-.clock .sec{
+.clock .sec {
     position: absolute;
 }
 
-.clock .hour, .hr{
+.clock .hour, .hr {
     width: 160px;
     height: 160px;
 }
-.clock .min, .mn{
+
+.clock .min, .mn {
     width: 190px;
     height: 190px;
 }
-.clock .sec, .sc{
+
+.clock .sec, .sc {
     width: 230px;
     height: 230px;
 }
 
-.hr, .mn, .sc{
+.hr, .mn, .sc {
     display: flex;
     justify-content: center;
     position: absolute;
     border-radius: 50%;
 }
 
-.hr:before{
+.hr:before {
     content: '';
     position: absolute;
     width: 8px;
@@ -78,7 +80,8 @@ body{
     z-index: 10;
     border-radius: 6px 6px 0 0;
 }
-.mn:before{
+
+.mn:before {
     content: '';
     position: absolute;
     width: 4px;
@@ -87,7 +90,8 @@ body{
     z-index: 11;
     border-radius: 6px 6px 0 0;
 }
-.sc:before{
+
+.sc:before {
     content: '';
     position: absolute;
     width: 2px;
@@ -97,8 +101,37 @@ body{
     border-radius: 6px 6px 0 0;
 }
 
-.date{
-    color:#ffc600;
+.date {
+    color: #ffc600;
     font-size: 20px;
-    padding-bottom: 20px;
+}
+
+.calendar .table {
+    color: #fff;
+    font-size: 20px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 15px;
+}
+
+.calendar .table .row {
+    display: flex;
+    flex-direction: row;
+}
+
+.calendar .table .row .col {
+    margin: 3px 6px;
+    padding: 1px 5px;
+    width: 32px;
+    text-align: center;
+}
+
+.calendar .holiday, .calendar .day-name {
+    color: #ffc600;
+}
+
+.calendar .active {
+    border: 1px solid #ffc600;
+    background-color: rgba(255, 198, 0, 0.05);
+    border-radius: 5px;
 }
