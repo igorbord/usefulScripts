@@ -123,6 +123,7 @@ body {
     margin: 3px 6px;
     padding: 0 4px 4px 4px;
     /* padding: 0 4px 3px 2px; */
+    border: 1px solid transparent;
     width: 32px;
     text-align: center;
 }
@@ -132,7 +133,7 @@ body {
 }
 
 .calendar .active {
-    /* border: 1px solid #ffc600; */
+    border: 1px solid rgba(255, 198, 0, 0.4) !important;
     background-color: rgba(255, 198, 0, 0.1);
-    border-radius: 50%;
+    border-radius: 35%;
 }
