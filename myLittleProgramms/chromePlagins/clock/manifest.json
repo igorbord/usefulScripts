@@ -4,9 +4,9 @@
 	"version": "1",
 	"action": {
 		"default_icon": {
-			"16": "time_16.png",
-			"24": "time_24.png",
-			"32": "time_32.png"
+			"16": "img/time_16.png",
+			"24": "img/time_24.png",
+			"32": "img/time_32.png"
 		},
 		"default_title": "time",
 		"default_popup": "index.html"
