@@ -43,8 +43,12 @@ window.addEventListener('DOMContentLoaded', () => {
         11: "Декабрь",
     }
 
-    document.querySelector('.date').innerText = `${monthName[date.getMonth()]} ( ${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()} )`;
+    // Вывод строки даты вида: Январь ( 05.01.2023 )
+    const day = String(date.getDate()).length == 1 ? '0' + date.getDate() : date.getDate()
+    const month = String(date.getMonth() + 1).length == 1 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1
+    document.querySelector('.date').innerText = `${monthName[date.getMonth()]} ( ${day}.${month}.${date.getFullYear()} )`;
 
+    // Вывод названий дней недели в календаре
     const calendar = document.querySelector('.calendar .table')
     let row = document.createElement('div');
     row.classList.add('row')
@@ -54,15 +58,16 @@ window.addEventListener('DOMContentLoaded', () => {
     }
     calendar.insertAdjacentElement('beforeend', row)
 
+    // Построить календарь
     let flag = false
     let calendarDay = new Date(date.getFullYear(), date.getMonth(), 1);
     let prevDay = calendarDay.getDate()
+    let weekDay = calendarDay.getDay() == 0 ? 7 : calendarDay.getDay()
     for (let r = 0; r < 6; r++) {
         row = document.createElement('div');
         row.classList.add('row')
         for (let c = 1; c <= 7; c++) {
             if (!flag) {
-                let weekDay = calendarDay.getDay() == 0 ? 6 : calendarDay.getDay()
                 if (weekDay == c) {
                     flag = true
                 }
