@@ -47,7 +47,7 @@ class Config
 
     public function __get($val)
     {
-        if (is_array(self::$cfg[$val]))
+        if (isset(self::$cfg[$val]) && is_array(self::$cfg[$val]))
             return new self(self::$cfg[$val]);
 
         if (isset($this->cfgChild) && isset($this->cfgChild[$val]))
