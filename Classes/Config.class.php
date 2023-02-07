@@ -50,9 +50,11 @@ class Config
         if (isset(self::$cfg[$val]) && is_array(self::$cfg[$val]))
             return new self(self::$cfg[$val]);
 
-        if (isset($this->cfgChild) && isset($this->cfgChild[$val]))
+        if (isset($this->cfgChild) && isset($this->cfgChild[$val])) {
+            if (is_array($this->cfgChild[$val]))
+                return new self($this->cfgChild[$val]);
             return $this->cfgChild[$val];
-        elseif (!isset($this->cfgChild) && isset(self::$cfg[$val]))
+        } elseif (!isset($this->cfgChild) && isset(self::$cfg[$val]))
             return self::$cfg[$val];
         else
             throw new Exception('variable "' . $val . '" is not exist');
@@ -68,5 +70,14 @@ class Config
     // Запрещаю изменять данные
     public function __set($key, $val)
     {
+    }
+
+    public function setCategoryNextVersion($version): object
+    {
+        self::$cfg['enaza']['categoryNextVersion'] = $version;
+        $result = file_put_contents(CFG_PATH, json_encode(self::$cfg), LOCK_EX);
+        if ($result === false) throw new Exception('Error save config');
+        if (!file_exists(CFG_PATH)) throw new Exception('Config file not found');
+        return $this;
     }
 }
